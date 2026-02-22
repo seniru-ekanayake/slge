@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SLGE 2026 — Operational Master Plan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ============================================================
+       MASTER LAYOUT
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #060d1a;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .viewer-header {
+      background: #0a1628;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .viewer-title {
+      color: #22d3ee;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .viewer-doc-id {
+      color: #475569;
+      font-size: 0.7rem;
+      font-family: monospace;
+    }
+
+    .slide-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .slide-nav a {
+      color: #64748b;
+      font-size: 0.65rem;
+      font-family: monospace;
+      text-decoration: none;
+      padding: 3px 8px;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .slide-nav a:hover {
+      color: #22d3ee;
+      border-color: #22d3ee;
+    }
+
+    .slides-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      gap: 24px;
+    }
+
+    .slide-wrapper {
+      position: relative;
+      width: 1280px;
+      max-width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .slide-label {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.5);
+      color: #475569;
+      font-size: 0.6rem;
+      font-family: monospace;
+      padding: 2px 6px;
+      border-radius: 3px;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    @media print {
+      .viewer-header { display: none; }
+      .slide-label { display: none; }
+      .slides-container { padding: 0; gap: 0; }
+      .slide-wrapper {
+        border-radius: 0;
+        box-shadow: none;
+        page-break-after: always;
+        break-after: page;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+
+    /* ============================================================
+       PER-SLIDE CSS (collected from all slides)
+       body { overflow: hidden } in individual slides is neutralized
+       because there is no nested <body> element — styles apply to the
+       nearest element with class slide-container inside slide-wrapper.
+    ============================================================ */
+
+    /* Neutralize slide-level body styles that would affect page scroll */
+    .slide-wrapper .slide-container {
+      width: 1280px;
+      max-width: 100%;
+    }
+
+    /* === SLIDE 1 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom right, #0f172a, #1e293b);
+            position: relative;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid #334155;
+            backdrop-filter: blur(4px);
+            border-radius: 6px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-left: 4px solid #06b6d4;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+        }
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .text-accent {
+            color: #22d3ee; /* Cyan 400 */
+        }
+        .text-accent-secondary {
+            color: #a78bfa; /* Violet 400 */
+        }
+        
+        .bullet-point::before {
+            content: "•";
+            color: #22d3ee;
+            display: inline-block; 
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        /* Chart constraints */
+        .chart-container {
+            position: relative;
+            height: 120px;
+            width: 100%;
+        }
+    
+
+/* === SLIDE 2 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            position: relative;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.85); /* Slate 800 with opacity */
+            border: 1px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .metric-box {
+            background-color: #1e293b;
+            border-left: 3px solid #06b6d4; /* Cyan 500 */
+        }
+
+        .table-header {
+            background-color: #1e293b;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            transition: background-color 0.2s;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .text-accent {
+            color: #22d3ee; /* Cyan 400 */
+        }
+        
+        .text-secondary {
+            color: #a78bfa; /* Violet 400 */
+        }
+
+        .bg-accent {
+            background-color: #22d3ee;
+        }
+
+        .bg-secondary {
+            background-color: #a78bfa;
+        }
+
+        /* Custom Scrollbar for overflow content if needed */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 2px;
+        }
+    
+
+/* === SLIDE 3 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Subtle grid background pattern */
+        .slide-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(30, 41, 59, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.5) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.9);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            z-index: 10;
+        }
+
+        .header-accent {
+            border-left: 4px solid #22d3ee; /* Cyan 400 */
+        }
+        
+        .header-warning {
+            border-left: 4px solid #fbbf24; /* Amber 400 */
+        }
+
+        .header-danger {
+            border-left: 4px solid #f87171; /* Red 400 */
+        }
+
+        .table-header {
+            background-color: #1e293b;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            font-size: 0.75rem;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .zone-pill {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .bg-zone-main { background-color: rgba(34, 211, 238, 0.2); color: #22d3ee; border: 1px solid rgba(34, 211, 238, 0.4); }
+        .bg-zone-gaming { background-color: rgba(167, 139, 250, 0.2); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.4); }
+        .bg-zone-logistics { background-color: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+        .text-accent { color: #22d3ee; }
+        .text-warning { color: #fbbf24; }
+        
+        /* Map placeholder styling */
+        .map-container {
+            position: relative;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .map-zone {
+            position: absolute;
+            border: 1px dashed #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+            background-color: rgba(15, 23, 42, 0.6);
+        }
+
+    
+
+/* === SLIDE 4 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Subtle grid background pattern */
+        .slide-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(30, 41, 59, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.5) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.9);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            z-index: 10;
+        }
+
+        .table-header {
+            background-color: #1e293b;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            font-size: 0.7rem;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .badge-pc { background-color: rgba(34, 211, 238, 0.15); color: #22d3ee; border: 1px solid rgba(34, 211, 238, 0.3); }
+        .badge-mobile { background-color: rgba(167, 139, 250, 0.15); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.3); }
+        .badge-console { background-color: rgba(244, 114, 182, 0.15); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.3); }
+        .badge-women { background-color: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+
+        .text-accent { color: #22d3ee; }
+        .text-secondary { color: #a78bfa; }
+        
+        /* Flow Chart Styles */
+        .flow-step {
+            position: relative;
+            background: #1e293b;
+            border: 1px solid #475569;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .flow-arrow {
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+    
+
+/* === SLIDE 5 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Category Header Strips */
+        .header-pc { border-left: 4px solid #22d3ee; background-color: #0f172a; }
+        .header-mobile { border-left: 4px solid #a78bfa; background-color: #0f172a; }
+        .header-console { border-left: 4px solid #f472b6; background-color: #0f172a; }
+        .header-women { border-left: 4px solid #fbbf24; background-color: #0f172a; }
+        .header-comic { border-left: 4px solid #ef4444; background-color: #0f172a; }
+
+        .table-header {
+            background-color: #0f172a;
+            color: #94a3b8;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #334155;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            font-size: 0.65rem;
+            color: #cbd5e1;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Rank Colors */
+        .rank-1 { color: #facc15; font-weight: 700; } /* Gold */
+        .rank-2 { color: #94a3b8; font-weight: 600; } /* Silver */
+        .rank-3 { color: #b45309; font-weight: 600; } /* Bronze */
+
+        .total-badge {
+            background-color: #334155;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.7rem;
+        }
+
+        .text-accent { color: #22d3ee; }
+        .text-secondary { color: #a78bfa; }
+        .text-gold { color: #facc15; }
+
+    
+
+/* === SLIDE 6 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Comic-Con Grid Pattern */
+        .comic-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H22v-2zm0 2v2H0v-2h20zm0 4v2H0v-2h20zm0 4v2H0v-2h20zm0 4v2H0v-2h20z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        /* Color Accents */
+        .accent-pink { border-left: 4px solid #ec4899; }
+        .accent-purple { border-left: 4px solid #a855f7; }
+        .accent-yellow { border-left: 4px solid #eab308; }
+        .accent-blue { border-left: 4px solid #3b82f6; }
+
+        .tag-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .tag-pro { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+        .tag-amateur { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+        .tag-tech { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+
+        .timeline-step {
+            position: relative;
+            padding-left: 20px;
+            padding-bottom: 12px;
+            border-left: 2px solid #475569;
+        }
+        
+        .timeline-step:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -6px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ec4899;
+        }
+
+        .table-header {
+            background-color: #0f172a;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #334155;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            font-size: 0.7rem;
+            color: #e2e8f0;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+    
+
+/* === SLIDE 7 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Tech Background Pattern */
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(51, 65, 85, 0.5) 1px, transparent 0);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.95);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Role Badges */
+        .badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge-ref { background-color: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-sec { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-tech { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-ops { background-color: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-lead { background-color: rgba(255, 255, 255, 0.1); color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.3); }
+
+        /* Table Styles */
+        .table-header {
+            background-color: #1e293b;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #334155;
+        }
+
+        .table-header th { padding: 8px; }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            font-size: 0.7rem;
+            color: #e2e8f0;
+            transition: background-color 0.15s;
+        }
+        
+        .table-row:hover {
+            background-color: rgba(51, 65, 85, 0.5);
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .matrix-cell {
+            text-align: center;
+            border-left: 1px solid #334155;
+            font-family: 'Inter', sans-serif;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cell-highlight {
+            background-color: rgba(34, 211, 238, 0.05);
+            font-weight: 600;
+            color: #22d3ee;
+        }
+
+        /* Timeline Styles */
+        .shift-block {
+            border-left: 2px solid #475569;
+            padding-left: 12px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .shift-block::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #22d3ee;
+        }
+
+        .text-accent { color: #22d3ee; }
+        .bg-accent { background-color: #22d3ee; }
+
+    
+
+/* === SLIDE 8 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Circuit Board Background Pattern */
+        .tech-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h80v80h-80z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3Cpath d='M20 20h60v60h-60z' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='5' fill='%23ffffff'/%3E%3Cpath d='M50 10v35M50 55v35M10 50h35M55 50h35' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 100px 100px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+
+        /* Spec Badges */
+        .spec-badge {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .badge-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .badge-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-yellow { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+        /* Timeline Styles */
+        .timeline-track {
+            position: relative;
+            height: 4px;
+            background: #334155;
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 2px;
+        }
+
+        .timeline-point {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px solid #94a3b8;
+            z-index: 2;
+        }
+
+        .timeline-point.active {
+            background: #22d3ee;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
+
+        .timeline-label {
+            position: absolute;
+            top: 16px;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 100px;
+        }
+
+        .status-light {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .status-ok { background-color: #4ade80; box-shadow: 0 0 4px #4ade80; }
+        .status-warn { background-color: #facc15; }
+
+        .header-accent { border-left: 3px solid #22d3ee; }
+        .header-power { border-left: 3px solid #facc15; }
+        .header-net { border-left: 3px solid #4ade80; }
+        .header-stage { border-left: 3px solid #a855f7; }
+
+    
+
+/* === SLIDE 9 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Abstract Network Background */
+        .bg-network {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.9);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .phase-header {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px 4px 0 0;
+            color: white;
+        }
+
+        .phase-1 { border-top: 3px solid #22d3ee; } /* Cyan */
+        .phase-2 { border-top: 3px solid #facc15; } /* Yellow */
+        .phase-3 { border-top: 3px solid #f472b6; } /* Pink */
+        .phase-4 { border-top: 3px solid #4ade80; } /* Green */
+
+        .metric-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .budget-pill {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-weight: 700;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #475569;
+            color: #94a3b8;
+        }
+
+        .channel-row {
+            border-bottom: 1px solid #334155;
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.7rem;
+        }
+        .channel-row:last-child { border-bottom: none; }
+
+        .social-icon { width: 24px; text-align: center; margin-right: 8px; font-size: 14px; }
+        .meta { color: #1877f2; }
+        .tiktok { color: #ff0050; }
+        .youtube { color: #ff0000; }
+        .discord { color: #5865f2; }
+        .whatsapp { color: #25d366; }
+
+        /* Timeline Step */
+        .timeline-step {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+        }
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 4px;
+            bottom: -16px;
+            width: 2px;
+            background: #334155;
+        }
+        .timeline-step:last-child::before { display: none; }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #334155;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #94a3b8;
+        }
+    
+
+/* === SLIDE 10 === */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            background-color: #0f172a;
+            position: relative;
+        }
+
+        /* Geometric Background Pattern */
+        .bg-geo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .section-card {
+            background-color: rgba(30, 41, 59, 0.9);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        /* Partner Tier Styles */
+        .partner-tier {
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border-left: 4px solid;
+        }
+        .tier-title { background: rgba(234, 179, 8, 0.1); border-color: #eab308; }
+        .tier-strategic { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; }
+        .tier-category { background: rgba(148, 163, 184, 0.1); border-color: #94a3b8; }
+
+        /* Risk Table */
+        .risk-row {
+            border-bottom: 1px solid #334155;
+            padding: 8px 4px;
+            font-size: 0.7rem;
+        }
+        .risk-row:last-child { border-bottom: none; }
+        .risk-icon { width: 20px; text-align: center; margin-right: 6px; }
+
+        /* Post Event Timeline */
+        .pe-step {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 14px;
+            border-left: 2px solid #334155;
+        }
+        .pe-step:last-child { border-left-color: transparent; margin-bottom: 0; }
+        .pe-dot {
+            position: absolute;
+            left: -6px;
+            top: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #0f172a;
+            border: 2px solid #4ade80;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge-green { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+        .badge-blue { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+
+    
+
+  </style>
+</head>
+<body>
+
+  <div class="viewer-header">
+    <div>
+      <div class="viewer-title">Sri Lanka Gaming Expo 2026 — Operational Master Plan</div>
+      <div class="viewer-doc-id">DOC ID: SLGE-OPS-26-V1 &nbsp;|&nbsp; 10 Slides</div>
+    </div>
+    <nav class="slide-nav">
+      <a href="#slide-01">S01</a> <a href="#slide-02">S02</a> <a href="#slide-03">S03</a> <a href="#slide-04">S04</a> <a href="#slide-05">S05</a> <a href="#slide-06">S06</a> <a href="#slide-07">S07</a> <a href="#slide-08">S08</a> <a href="#slide-09">S09</a> <a href="#slide-10">S10</a>
+    </nav>
+  </div>
+
+  <div class="slides-container">
+    
+<div id="slide-01" class="slide-wrapper">
+  <div class="slide-label">SLIDE 01</div>
+  <div class="slide-container"><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Event Vision &amp; Objectives</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">SRI LANKA GAMING EXPO 2026 | OPERATIONAL MASTER PLAN</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-accent font-bold text-lg">SLIDE 01</div></div></header><div class="grid grid-cols-12 gap-4 flex-1"><div class="col-span-3 flex flex-col gap-4"><div class="section-card p-4 flex-1"><h3 class="text-xl text-accent mb-3 border-b border-gray-700 pb-1">Event Snapshot</h3><div class="space-y-4"><div><p class="text-xs text-gray-400 uppercase">Event Name</p><p class="font-bold text-white">Sri Lanka Gaming Expo 2026</p></div><div><p class="text-xs text-gray-400 uppercase">Primary Venue</p><p class="font-bold text-white text-sm">BMICH – Colombo Hall E (TBC)</p><p class="text-xs text-gray-500 italic">Indoor Exhibition Halls</p></div><div class="bg-slate-800 rounded p-2"><p class="text-xs text-red-400 font-bold mb-1 uppercase"><i class="fas fa-shield-alt mr-1"></i>Contingency Venues</p><ul class="text-xs text-gray-300 space-y-1"><li class="flex justify-between"><span>SLCC / SL ECC</span> <span class="text-gray-500">Full</span></li></ul></div><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-slate-900 p-2 rounded text-center border border-gray-700"><p class="text-2xl font-bold text-accent">15K+</p><p class="text-[10px] uppercase text-gray-400">Footfall</p></div><div class="bg-slate-900 p-2 rounded text-center border border-gray-700"><p class="text-2xl font-bold text-accent-secondary">5K+</p><p class="text-[10px] uppercase text-gray-400">Gamers</p></div></div><div><p class="text-xs text-gray-400 uppercase">Total Prize Pool</p><p class="text-2xl font-bold text-yellow-400">LKR 2,000,000</p></div></div></div></div><div class="col-span-5 flex flex-col gap-4"><div class="section-card p-4 h-auto"><h3 class="text-lg text-white mb-2 flex items-center"><i class="fas fa-crosshairs text-accent mr-2"></i> Strategic Positioning
+                    </h3><p class="text-sm text-gray-300 leading-snug mb-3">
+                        To establish Sri Lanka's definitive gaming and pop-culture ecosystem event, integrating professional Esports, Creator Economy, and Comic-Con culture into a single national platform.
+                    </p><div class="bg-slate-800/50 p-2 rounded border-l-2 border-accent"><p class="text-xs text-gray-400 font-bold mb-1">WHY THIS IS THE LARGEST:</p><ul class="text-xs text-gray-300 space-y-1 pl-3"><li class="bullet-point">Multi-title Esports (PC, Mobile, Console) + Full Comic-Con</li><li class="bullet-point">10+ Game IPs activated simultaneously</li><li class="bullet-point">Government (Sports Ministry) &amp; Corporate alignment</li><li class="bullet-point">National Broadcast &amp; 3,000 sqft Comic-Con Zone</li></ul></div></div><div class="section-card p-4 flex-1"><h3 class="text-lg text-white mb-3">Core Objectives</h3><div class="grid grid-cols-2 gap-3 h-full pb-2"><div class="bg-slate-900 p-3 rounded border border-gray-700"><div class="flex items-center mb-1"><i class="fas fa-flag text-red-400 mr-2 text-xs"></i><h4 class="text-sm font-bold text-gray-200">BRAND</h4></div><p class="text-xs text-gray-400">Establish SLGE as the flagship annual festival in the South Asian calendar.</p></div><div class="bg-slate-900 p-3 rounded border border-gray-700"><div class="flex items-center mb-1"><i class="fas fa-users text-green-400 mr-2 text-xs"></i><h4 class="text-sm font-bold text-gray-200">COMMUNITY</h4></div><p class="text-xs text-gray-400">Build grassroots-to-pro pipeline and inclusivity via Women's brackets.</p></div><div class="bg-slate-900 p-3 rounded border border-gray-700"><div class="flex items-center mb-1"><i class="fas fa-chart-line text-blue-400 mr-2 text-xs"></i><h4 class="text-sm font-bold text-gray-200">COMMERCIAL</h4></div><p class="text-xs text-gray-400">Drive sponsorship ROI, data capture, and Free Entry Model.</p></div><div class="bg-slate-900 p-3 rounded border border-gray-700"><div class="flex items-center mb-1"><i class="fas fa-expand-arrows-alt text-purple-400 mr-2 text-xs"></i><h4 class="text-sm font-bold text-gray-200">SCALABILITY</h4></div><p class="text-xs text-gray-400">Launchpad for regional qualifiers and 2028 South Asian invitations.</p></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-lg text-white mb-3">Ecosystem Overview</h3><div class="relative"><div class="flex flex-wrap justify-center gap-2"><span class="px-2 py-1 bg-slate-700 rounded text-[10px] text-gray-300 border border-gray-600">Sponsors &amp; Telcos</span><span class="px-2 py-1 bg-slate-700 rounded text-[10px] text-gray-300 border border-gray-600">Hardware OEMs</span><span class="px-2 py-1 bg-slate-700 rounded text-[10px] text-gray-300 border border-gray-600">Publishers</span><div class="w-full"></div><div class="px-4 py-2 bg-accent/20 border border-accent rounded text-center w-full"><p class="text-xs font-bold text-accent uppercase tracking-widest">SLGE 2026 Platform</p></div><div class="w-full"></div><span class="px-2 py-1 bg-slate-700 rounded text-[10px] text-gray-300 border border-gray-600">Govt &amp; Tourism</span><span class="px-2 py-1 bg-slate-700 rounded text-[10px] text-gray-300 border border-gray-600">Media</span><span class="px-2 py-1 bg-slate-700 rounded text-[10px] text-gray-300 border border-gray-600">Vendors</span></div></div><div class="mt-4 pt-3 border-t border-gray-700"><h4 class="text-xs font-bold text-gray-400 mb-2 uppercase">Growth Trajectory</h4><div class="flex items-center justify-between text-[10px] text-gray-500"><div class="text-center"><div class="w-2 h-2 bg-accent rounded-full mx-auto mb-1"></div><span class="text-white font-bold">2026</span><br/>Launch
+                            </div><div class="h-[1px] bg-gray-600 flex-1 mx-2"></div><div class="text-center"><div class="w-2 h-2 bg-gray-600 rounded-full mx-auto mb-1"></div><span>2027</span><br/>Provincial
+                            </div><div class="h-[1px] bg-gray-600 flex-1 mx-2"></div><div class="text-center"><div class="w-2 h-2 bg-gray-600 rounded-full mx-auto mb-1"></div><span>2028</span><br/>South Asia
+                            </div></div></div></div><div class="section-card p-4 flex-1"><h3 class="text-lg text-white mb-3">Primary Success KPIs</h3><table class="w-full text-sm"><tbody class="divide-y divide-gray-700"><tr><td class="py-2 text-gray-400 text-xs">Attendance</td><td class="py-2 text-right font-bold text-white">≥ 15,000</td></tr><tr><td class="py-2 text-gray-400 text-xs">Stream Reach</td><td class="py-2 text-right font-bold text-white">≥ 100,000</td></tr><tr><td class="py-2 text-gray-400 text-xs">Sponsor NPS</td><td class="py-2 text-right font-bold text-accent">8 / 10</td></tr><tr><td class="py-2 text-gray-400 text-xs">Safety Incidents</td><td class="py-2 text-right font-bold text-green-400">ZERO</td></tr><tr><td class="py-2 text-gray-400 text-xs">Network Uptime</td><td class="py-2 text-right font-bold text-white">99.5%</td></tr></tbody></table></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+
+<div id="slide-02" class="slide-wrapper">
+  <div class="slide-label">SLIDE 02</div>
+  <div class="slide-container"><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Audience &amp; Commercial Value</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">DEMOGRAPHICS • SPENDING POWER • SPONSORSHIP ASSETS</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-accent font-bold text-lg">SLIDE 02</div></div></header><div class="grid grid-cols-12 gap-5 flex-1 h-full"><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-lg text-white mb-3 flex items-center"><i class="fas fa-users text-accent mr-2"></i> Core Segments
+                </h3><div class="grid grid-cols-2 gap-2"><div class="bg-slate-900/50 p-2 rounded border border-gray-700 flex items-center"><i class="fas fa-gamepad text-secondary w-6"></i><div><p class="text-[10px] text-gray-400 uppercase">Primary</p><p class="text-xs font-bold text-white">Competitive Gamers</p></div></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700 flex items-center"><i class="fas fa-mask text-pink-400 w-6"></i><div><p class="text-[10px] text-gray-400 uppercase">Creative</p><p class="text-xs font-bold text-white">Cosplayers</p></div></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700 flex items-center"><i class="fas fa-video text-red-400 w-6"></i><div><p class="text-[10px] text-gray-400 uppercase">Influential</p><p class="text-xs font-bold text-white">Content Creators</p></div></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700 flex items-center"><i class="fas fa-laptop-code text-blue-400 w-6"></i><div><p class="text-[10px] text-gray-400 uppercase">Target</p><p class="text-xs font-bold text-white">Tech/STEM Youth</p></div></div></div></div><div class="section-card p-4 flex-1 flex flex-col"><h3 class="text-lg text-white mb-2">Demographic Split</h3><div class="flex-1 flex items-center justify-center relative"><canvas id="demographicsChart"></canvas></div><div class="mt-3 grid grid-cols-2 gap-2 text-center"><div><p class="text-2xl font-bold text-white">65%</p><p class="text-[10px] text-gray-400 uppercase">Debit/Credit Card Holders</p></div><div><p class="text-2xl font-bold text-white">80%</p><p class="text-[10px] text-gray-400 uppercase">Heavy Mobile Data Users</p></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-lg text-white mb-3 flex items-center"><i class="fas fa-wallet text-green-400 mr-2"></i> Purchasing Power
+                </h3><div class="space-y-3"><div class="metric-box p-3 rounded"><div class="flex justify-between items-end"><div><p class="text-[10px] text-gray-400 uppercase mb-1">Annual Gaming Gear Spend</p><p class="text-xl font-bold text-white">LKR 60K - 200K</p></div><i class="fas fa-headset text-gray-600 text-2xl"></i></div></div><div class="metric-box p-3 rounded border-l-3 border-yellow-500" style="border-left-color: #eab308;"><div class="flex justify-between items-end"><div><p class="text-[10px] text-gray-400 uppercase mb-1">Revenue Model</p><p class="text-xs font-bold text-white">Free Public Entry</p><p class="text-[9px] text-gray-300">Revenue via Sponsorships, Brand Activations, Vendor Booth Sales, Merchandising & Affiliate Partnerships</p></div><i class="fas fa-ticket-alt text-gray-600 text-2xl"></i></div></div><div class="metric-box p-3 rounded border-l-3 border-pink-500" style="border-left-color: #ec4899;"><div class="flex justify-between items-end"><div><p class="text-[10px] text-gray-400 uppercase mb-1">Daily F&amp;B Spend</p><p class="text-xl font-bold text-white">LKR 800 - 1,500</p></div><i class="fas fa-utensils text-gray-600 text-2xl"></i></div></div></div></div><div class="section-card p-4 flex-1"><h3 class="text-lg text-white mb-3">Digital Behavior</h3><ul class="space-y-3"><li class="flex items-center justify-between text-sm"><span class="text-gray-300"><i class="fas fa-clock text-accent w-5"></i> Daily Engagement</span><span class="font-bold text-white">3-5 Hours</span></li><li class="flex items-center justify-between text-sm"><span class="text-gray-300"><i class="fas fa-share-alt text-secondary w-5"></i> Social Multiplier</span><span class="font-bold text-white">1 Pax = 5x Reach</span></li><li class="flex items-center justify-between text-sm"><span class="text-gray-300"><i class="fas fa-video text-red-400 w-5"></i> Content Creation</span><span class="font-bold text-white">40% Weekly</span></li></ul><div class="mt-4 p-3 bg-slate-900 rounded border border-gray-700"><p class="text-[10px] text-gray-400 uppercase mb-2">Platform Preference</p><div class="flex justify-between gap-1"><div class="h-1 bg-blue-500 w-[40%] rounded-full"></div><div class="h-1 bg-red-500 w-[30%] rounded-full"></div><div class="h-1 bg-black w-[20%] rounded-full border border-gray-600"></div><div class="h-1 bg-purple-500 w-[10%] rounded-full"></div></div><div class="flex justify-between text-[8px] text-gray-500 mt-1"><span>Mobile (40%)</span><span>PC (30%)</span><span>TikTok (20%)</span><span>Insta (10%)</span></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-lg text-white mb-3 flex items-center"><i class="fas fa-handshake text-yellow-400 mr-2"></i> Strategic Fit
+                </h3><div class="grid grid-cols-2 gap-3 mb-4"><div><h4 class="text-xs font-bold text-accent mb-2 border-b border-gray-700 pb-1">ENDEMIC</h4><ul class="text-[11px] text-gray-300 space-y-1"><li><i class="fas fa-check text-green-500 mr-1"></i> Hardware OEMs</li><li><i class="fas fa-check text-green-500 mr-1"></i> Peripherals</li><li><i class="fas fa-check text-green-500 mr-1"></i> Game Publishers</li><li><i class="fas fa-check text-green-500 mr-1"></i> Energy Drinks</li></ul></div><div><h4 class="text-xs font-bold text-secondary mb-2 border-b border-gray-700 pb-1">NON-ENDEMIC</h4><ul class="text-[11px] text-gray-300 space-y-1"><li><i class="fas fa-check text-green-500 mr-1"></i> Telcos (5G)</li><li><i class="fas fa-check text-green-500 mr-1"></i> Banking (Youth)</li><li><i class="fas fa-check text-green-500 mr-1"></i> FMCG / Snacks</li><li><i class="fas fa-check text-green-500 mr-1"></i> Education</li></ul></div></div></div><div class="section-card p-0 overflow-hidden flex-1 flex flex-col"><div class="p-3 border-b border-gray-700 bg-slate-800"><h3 class="text-sm text-white font-bold">SPONSORABLE ASSETS &amp; METRICS</h3></div><div class="overflow-auto flex-1"><table class="w-full text-left border-collapse"><thead class="table-header"><tr><th class="p-2">Asset</th><th class="p-2">Key Metric</th><th class="p-2 text-right">Reach</th></tr></thead><tbody class="text-xs text-gray-300"><tr class="table-row hover:bg-slate-800"><td class="p-2 font-semibold text-white">Title Sponsor</td><td class="p-2">Media Value</td><td class="p-2 text-right text-accent">10M+</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2">Physical Footfall</td><td class="p-2">Attendees</td><td class="p-2 text-right">15,000+</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2">Main Stage</td><td class="p-2">Live Viewers</td><td class="p-2 text-right">8,000 - 15,000</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2">Social Media</td><td class="p-2">Reach Projection</td><td class="p-2 text-right">75K - 150K</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2">Wi-Fi Splash</td><td class="p-2">Data Capture</td><td class="p-2 text-right">15K Leads</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2">Cosplay Runway</td><td class="p-2">Social Shares</td><td class="p-2 text-right">500K+</td></tr></tbody></table></div><div class="p-2 bg-slate-900 border-t border-gray-700 text-[10px] text-center text-gray-500">
+                    * Metrics based on 2024-25 Industry Benchmarks
+                </div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div><script>
+    // Chart.js Configuration
+    const ctx = document.getElementById('demographicsChart').getContext('2d');
+    const demographicsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['18-24 Yrs', '25-34 Yrs', 'Under 18', '35+ Yrs'],
+            datasets: [{
+                data: [45, 30, 15, 10],
+                backgroundColor: [
+                    '#22d3ee', // Cyan
+                    '#a78bfa', // Purple
+                    '#f472b6', // Pink
+                    '#94a3b8'  // Slate
+                ],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#cbd5e1',
+                        font: {
+                            family: 'Inter',
+                            size: 10
+                        },
+                        boxWidth: 10
+                    }
+                }
+            },
+            cutout: '65%'
+        }
+    });</script>
+</div>
+
+<div id="slide-03" class="slide-wrapper">
+  <div class="slide-label">SLIDE 03</div>
+  <div class="slide-container"><div class="slide-bg"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10 relative"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Venue Strategy, Zoning &amp; Crowd Flow</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">BMICH MASTER PLAN • CONTINGENCY PROTOCOLS • CAPACITY PLANNING</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-accent font-bold text-lg">SLIDE 03</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 z-10 h-full"><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 header-accent"><h3 class="text-sm font-bold text-white mb-2 flex items-center justify-between"><span><i class="fas fa-map-marker-alt text-accent mr-2"></i>Primary Venue: BMICH Hall E</span><span class="text-[10px] bg-yellow-900 text-yellow-300 px-2 py-0.5 rounded border border-yellow-700">PENDING CONFIRMATION</span></h3><ul class="text-[11px] text-gray-300 space-y-2"><li class="flex items-start"><i class="fas fa-check text-green-500 mt-0.5 mr-2 text-[10px]"></i><span><strong class="text-white">Capacity:</strong> 200kW mains power, fiber-ready infrastructure suitable for high-density esports.</span></li><li class="flex items-start"><i class="fas fa-check text-green-500 mt-0.5 mr-2 text-[10px]"></i><span><strong class="text-white">Logistics:</strong> Central Colombo location, 1,000+ vehicle parking, proven expo operations history.</span></li><li class="flex items-start"><i class="fas fa-check text-green-500 mt-0.5 mr-2 text-[10px]"></i><span><strong class="text-white">Flexibility:</strong> Combined Exhibition Halls A+B allows seamless zoning between dark esports areas and bright expo floors.</span></li></ul></div><div class="section-card flex-1 flex flex-col overflow-hidden header-warning"><div class="p-3 bg-slate-800 border-b border-gray-700"><h3 class="text-sm font-bold text-white"><i class="fas fa-shield-alt text-warning mr-2"></i>Contingency Activation Logic</h3></div><div class="overflow-auto flex-1"><table class="w-full text-left"><thead class="table-header"><tr><th class="p-2 pl-3">Venue Option</th><th class="p-2">Trigger</th><th class="p-2">Protocol</th></tr></thead><tbody class="text-gray-300"><tr class="table-row bg-slate-900/50"><td class="p-2 pl-3 font-bold text-white">SLCC / SL ECC</td><td class="p-2 text-red-400 font-mono">T-7 Days</td><td class="p-2 text-[10px]">Like-for-like halls. Pre-approved floorplans ready.</td></tr></tbody></table></div><div class="p-2 bg-red-900/20 border-t border-red-900/50 text-[10px] text-red-200 flex items-center"><i class="fas fa-exclamation-triangle mr-2"></i>
+                        Transition Comms: SMS/Email blast within 4 hrs of trigger.
+                    </div></div><div class="section-card p-3 header-danger"><h3 class="text-xs font-bold text-white mb-2 uppercase">Crowd &amp; Safety Protocols</h3><div class="grid grid-cols-2 gap-2 text-[10px] text-gray-300"><div class="bg-slate-800 p-2 rounded border border-gray-700"><p class="text-white font-bold mb-1">Entry Control</p><p>3 entries with magnetometers. Color-coded wristbands (VIP/Day/Player).</p></div><div class="bg-slate-800 p-2 rounded border border-gray-700"><p class="text-white font-bold mb-1">Throughput</p><p>Peak 1,200 pax/hr per gate. Fast-track lanes for players.</p></div><div class="bg-slate-800 p-2 rounded border border-gray-700"><p class="text-white font-bold mb-1">Evacuation</p><p>4 Emergency Exits. Muster Points A/B/C. ADA compliant routes.</p></div><div class="bg-slate-800 p-2 rounded border border-gray-700"><p class="text-white font-bold mb-1">Bag Safety</p><p>Secure cloakroom with QR tagging. Capacity: 200+ bags (Comic-Con Members Only).</p></div></div></div></div><div class="col-span-4 flex flex-col"><div class="section-card h-full flex flex-col overflow-hidden"><div class="p-3 bg-slate-800 border-b border-gray-700 flex justify-between items-center"><h3 class="text-sm font-bold text-white">Zone Map Visualization</h3><span class="text-[10px] text-gray-400">NOT TO SCALE</span></div><div class="flex-1 p-4 bg-slate-900 relative"><div class="w-full h-full border-2 border-gray-700 rounded p-1 relative bg-slate-950"><div class="absolute top-2 left-2 right-2 h-1/4 bg-blue-900/30 border border-blue-500/50 rounded flex flex-col items-center justify-center"><p class="text-blue-300 font-bold text-xs">MAIN ESPORTS STAGE</p><p class="text-blue-400 text-[9px]">100-200 SEATS</p></div><div class="absolute top-[28%] left-2 w-[28%] bottom-2 flex flex-col gap-2"><div class="flex-1 bg-purple-900/20 border border-purple-500/40 rounded flex flex-col items-center justify-center"><p class="text-purple-300 font-bold text-[9px]">PC ZONE</p><p class="text-gray-500 text-[8px]">50+ STATIONS</p></div><div class="flex-1 bg-purple-900/20 border border-purple-500/40 rounded flex flex-col items-center justify-center"><p class="text-purple-300 font-bold text-[9px]">MOBILE ZONE</p><p class="text-gray-500 text-[8px]">5+ MAJOR ZONES</p></div><div class="h-1/4 bg-yellow-900/20 border border-yellow-500/40 rounded flex flex-col items-center justify-center"><p class="text-yellow-300 font-bold text-[9px]">F&amp;B COURT</p></div></div><div class="absolute top-[28%] left-[32%] right-[32%] bottom-2 flex flex-col gap-2"><div class="h-1/3 bg-pink-900/20 border border-pink-500/40 rounded flex flex-col items-center justify-center"><p class="text-pink-300 font-bold text-[9px]">COMIC-CON</p><p class="text-gray-500 text-[8px]">3,000 SQFT</p></div><div class="flex-1 bg-green-900/20 border border-green-500/40 rounded flex flex-col items-center justify-center"><p class="text-green-300 font-bold text-[9px]">SPONSOR ACTIVATIONS</p><p class="text-gray-500 text-[8px]">TBC</p></div></div><div class="absolute top-[28%] right-2 w-[28%] bottom-2 flex flex-col gap-2"><div class="h-1/4 bg-blue-900/20 border border-blue-500/40 rounded flex flex-col items-center justify-center"><p class="text-blue-300 font-bold text-[9px]">SEC STAGE</p><p class="text-gray-500 text-[8px]">100-200 SEATS</p></div><div class="h-1/4 bg-purple-900/20 border border-purple-500/40 rounded flex flex-col items-center justify-center"><p class="text-purple-300 font-bold text-[9px]">CONSOLE</p><p class="text-gray-500 text-[8px]">10+ STATIONS</p></div><div class="flex-1 bg-gray-800/40 border border-gray-600/40 rounded flex flex-col items-center justify-center"><p class="text-gray-300 font-bold text-[9px]">REST &amp; BAGS</p></div></div><div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-slate-900 px-2 text-[10px] font-bold text-white border border-gray-700 rounded">ENTRY</div></div></div></div></div><div class="col-span-4 flex flex-col"><div class="section-card h-full flex flex-col overflow-hidden"><div class="p-3 bg-slate-800 border-b border-gray-700"><h3 class="text-sm font-bold text-white">Zone Capacity &amp; Specs</h3></div><div class="flex-1 overflow-auto"><table class="w-full text-left border-collapse"><thead class="table-header sticky top-0 bg-slate-800 z-10"><tr><th class="p-2 pl-3">Zone Name</th><th class="p-2 text-right">Capacity / Size</th><th class="p-2 text-right">Notes</th></tr></thead><tbody class="text-gray-300"><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-zone-main">Main Stage</span></td><td class="p-2 text-right font-mono text-white">100-200 Seats</td><td class="p-2 text-right text-[10px]">Theater Style</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-zone-main">Secondary Stage</span></td><td class="p-2 text-right font-mono text-white">100-200 Seats</td><td class="p-2 text-right text-[10px]">Bleachers</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-zone-gaming">PC Gaming Zone</span></td><td class="p-2 text-right font-mono text-white">50+ Stations</td><td class="p-2 text-right text-[10px]">5v5 Pods</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-zone-gaming">Mobile Zone</span></td><td class="p-2 text-right font-mono text-white">5+ Major Zones</td><td class="p-2 text-right text-[10px]">Tables + Power</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-zone-gaming">Console Zone</span></td><td class="p-2 text-right font-mono text-white">10+ Stations</td><td class="p-2 text-right text-[10px]">TV Mounts</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-pink-900/40 text-pink-300 border border-pink-500/40">Comic-Con</span></td><td class="p-2 text-right font-mono text-white">3,000 Sqft</td><td class="p-2 text-right text-[10px]">Open Floor</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-pink-900/40 text-pink-300 border border-pink-500/40">Artist Alley</span></td><td class="p-2 text-right font-mono text-white">50+ Booths</td><td class="p-2 text-right text-[10px]">2m x 2m ea</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-green-900/30 text-green-300 border border-green-500/40">Sponsor Area</span></td><td class="p-2 text-right font-mono text-white">TBC</td><td class="p-2 text-right text-[10px]">Custom Builds</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-yellow-900/30 text-yellow-300 border border-yellow-500/40">F&amp;B Court</span></td><td class="p-2 text-right font-mono text-white">10+ Vendors</td><td class="p-2 text-right text-[10px]">Gas/Electric</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="zone-pill bg-zone-logistics">Bag Safety</span></td><td class="p-2 text-right font-mono text-white">200+ Bags</td><td class="p-2 text-right text-[10px]">Comic-Con Members Only</td></tr></tbody></table></div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10 relative"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+
+<div id="slide-04" class="slide-wrapper">
+  <div class="slide-label">SLIDE 04</div>
+  <div class="slide-container"><div class="slide-bg"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10 relative"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Esports Titles, Formats &amp; Match Flow</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">TOURNAMENT STRUCTURE • RANKING SYSTEMS • TECHNICAL SPECIFICATIONS</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-accent font-bold text-lg">SLIDE 04</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 z-10 h-full overflow-hidden"><div class="col-span-7 flex flex-col h-full"><div class="section-card flex-1 flex flex-col overflow-hidden"><div class="p-3 bg-slate-800 border-b border-gray-700 flex justify-between items-center"><h3 class="text-sm font-bold text-white"><i class="fas fa-gamepad text-accent mr-2"></i> Tournament Titles &amp; Formats</h3><span class="text-[10px] text-gray-400 bg-slate-900 px-2 py-1 rounded">TOTAL TITLES: 14</span></div><div class="overflow-auto flex-1"><table class="w-full text-left border-collapse"><thead class="table-header sticky top-0 bg-slate-800 z-10"><tr><th class="p-2 pl-3">Category / Title</th><th class="p-2">Format</th><th class="p-2">Progression</th><th class="p-2 text-right">Est. Duration</th></tr></thead><tbody class="text-gray-300"><tr class="bg-slate-900/50"><td class="p-1 pl-3 text-[10px] font-bold text-accent border-b border-slate-700" colspan="4">PC GAMING (5v5)</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-pc px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">PC</span> <strong class="text-white text-[11px]">Valorant</strong></td><td class="p-2 text-[10px]">5v5 | BO1</td><td class="p-2 text-[10px]">Single Elimination</td><td class="p-2 text-right text-[10px] font-mono">60-90m</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-pc px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">PC</span> <strong class="text-white text-[11px]">Dota 2</strong></td><td class="p-2 text-[10px]">Entire Tournament Online</td><td class="p-2 text-[10px]">Double Elimination (Top 8)</td><td class="p-2 text-right text-[10px] font-mono">45-60m</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-pc px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">PC</span> <strong class="text-white text-[11px]">League of Legends</strong></td><td class="p-2 text-[10px]">5v5 | Summoner's Rift</td><td class="p-2 text-[10px]">Single Elimination</td><td class="p-2 text-right text-[10px] font-mono">40-50m</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-pc px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">PC</span> <strong class="text-white text-[11px]">COD 4 (Promod)</strong></td><td class="p-2 text-[10px]">5v5 | Search &amp; Destroy (MR12)</td><td class="p-2 text-[10px]">Single Elimination</td><td class="p-2 text-right text-[10px] font-mono">45m</td></tr><tr class="bg-slate-900/50"><td class="p-1 pl-3 text-[10px] font-bold text-secondary border-b border-slate-700 border-t border-slate-700" colspan="4">MOBILE GAMING</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-mobile px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">MOB</span> <strong class="text-white text-[11px]">PUBG Mobile</strong></td><td class="p-2 text-[10px]">Squad (4) | Battle Royale</td><td class="p-2 text-[10px]">Points System (Placement + Kills)</td><td class="p-2 text-right text-[10px] font-mono">30m / Map</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-mobile px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">MOB</span> <strong class="text-white text-[11px]">Free Fire</strong></td><td class="p-2 text-[10px]">Squad (4) | Battle Royale</td><td class="p-2 text-[10px]">Points System (Placement + Kills)</td><td class="p-2 text-right text-[10px] font-mono">20m / Map</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-mobile px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">MOB</span> <strong class="text-white text-[11px]">Mobile Legends</strong></td><td class="p-2 text-[10px]">5v5 | Draft Pick</td><td class="p-2 text-[10px]">Single Elimination</td><td class="p-2 text-right text-[10px] font-mono">20-30m</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-mobile px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">MOB</span> <strong class="text-white text-[11px]">Clash Royale</strong></td><td class="p-2 text-[10px]">1v1 | Duel</td><td class="p-2 text-[10px]">Bracket (Best of 5)</td><td class="p-2 text-right text-[10px] font-mono">15m</td></tr><tr class="bg-slate-900/50"><td class="p-1 pl-3 text-[10px] font-bold text-pink-400 border-b border-slate-700 border-t border-slate-700" colspan="4">CONSOLE / SINGLE PLAYER / WOMEN'S</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-console px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">PS5</span> <strong class="text-white text-[11px]">FC 25 / Tekken / SF / MK</strong></td><td class="p-2 text-[10px]">1v1 | Standard Rules</td><td class="p-2 text-[10px]">Single or Double Elimination (TBC)</td><td class="p-2 text-right text-[10px] font-mono">15-20m</td></tr><tr class="table-row hover:bg-slate-800"><td class="p-2 pl-3"><span class="badge-women px-1.5 py-0.5 rounded text-[10px] font-bold mr-2">FEM</span> <strong class="text-white text-[11px]">PUBGM / Free Fire Solo</strong></td><td class="p-2 text-[10px]">Solo | Battle Royale</td><td class="p-2 text-[10px]">Cumulative Points (3 Maps)</td><td class="p-2 text-right text-[10px] font-mono">30m / Map</td></tr></tbody></table></div></div></div><div class="col-span-5 flex flex-col gap-4 h-full"><div class="section-card p-4"><h3 class="text-sm font-bold text-white mb-3 flex items-center"><i class="fas fa-sitemap text-yellow-400 mr-2"></i> Qualification &amp; Ranking Logic
+            </h3><div class="grid grid-cols-3 gap-2 mb-4 text-[10px] text-gray-300"><div class="flow-step border-l-2 border-gray-500"><p class="font-bold text-white mb-1">DIRECT LAN BRACKETS</p><p class="text-[9px]">Event Day 1</p><p class="text-[9px] text-gray-400 mt-1">Direct Elimination</p><i class="fas fa-chevron-right flow-arrow"></i></div><div class="flow-step border-l-2 border-accent"><p class="font-bold text-white mb-1">BRACKET STAGE</p><p class="text-[9px]">Event Day 2</p><p class="text-[9px] text-gray-400 mt-1">Quarter / Semis</p><i class="fas fa-chevron-right flow-arrow"></i></div><div class="flow-step border-l-2 border-secondary"><p class="font-bold text-white mb-1">GRAND FINALS</p><p class="text-[9px]">Event Day 3</p><p class="text-[9px] text-gray-400 mt-1">Main Stage (Bo3/Bo5)</p></div></div><div class="grid grid-cols-2 gap-3"><div class="bg-slate-900 p-2 rounded border border-gray-700"><p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Tie-Breaker Logic</p><ul class="text-[9px] text-gray-300 space-y-1 list-disc pl-3"><li>Head-to-Head Result</li><li>Round Difference (RD)</li><li>Strength of Victory (SoV)</li><li>Time Rating (Speed of win)</li></ul></div><div class="bg-slate-900 p-2 rounded border border-gray-700"><p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Bracket Types</p><ul class="text-[9px] text-gray-300 space-y-1 list-disc pl-3"><li><span class="text-white font-semibold">Team:</span> Single Elim (Mostly)</li><li><span class="text-white font-semibold">Solo/FGC:</span> Single/Double Elim (TBC)</li><li><span class="text-white font-semibold">BR:</span> Points (Placement + Kills)</li></ul></div></div></div><div class="section-card p-3"><h3 class="text-xs font-bold text-white mb-2 uppercase flex items-center"><i class="fas fa-balance-scale text-green-400 mr-2"></i> Integrity &amp; Dispute Protocol
+            </h3><div class="grid grid-cols-2 gap-2 text-[10px] text-gray-300"><div class="bg-slate-800 p-2 rounded border border-gray-700"><p class="text-white font-bold mb-0.5">Anti-Cheat</p><p class="text-[9px]">Vanguard / VAC / Mobile Integrity Tool active. Device inspections pre-match.</p></div><div class="bg-slate-800 p-2 rounded border border-gray-700"><p class="text-white font-bold mb-0.5">Dispute Panel</p><p class="text-[9px]">3-person jury. Evidence (VOD/Screenshots) required. 15min appeal window.</p></div></div></div><div class="section-card flex-1 flex flex-col p-3"><h3 class="text-xs font-bold text-white mb-2 uppercase flex items-center"><i class="fas fa-server text-blue-400 mr-2"></i> Tech Requirements Per Zone
+            </h3><div class="space-y-2 flex-1 overflow-auto pr-1"><div class="flex items-start text-[10px] border-b border-gray-700 pb-2"><div class="w-12 font-bold text-accent pt-1">PC</div><div class="flex-1 text-gray-300"><p>240Hz Monitors, LAN Config active (Tournament Realm).</p><p class="text-gray-500 text-[9px]">Admin Ratio: 1 per 12 stations</p></div></div><div class="flex items-start text-[10px] border-b border-gray-700 pb-2"><div class="w-12 font-bold text-secondary pt-1">Mobile</div><div class="flex-1 text-gray-300"><p>5G Wi-Fi (VLAN priority). Device cooling pads permitted.</p><p class="text-gray-500 text-[9px]">Admin Ratio: 1 per 20 stations</p></div></div><div class="flex items-start text-[10px]"><div class="w-12 font-bold text-pink-400 pt-1">Console</div><div class="flex-1 text-gray-300"><p>144Hz Monitors. Wired controllers only (Bluetooth disabled).</p><p class="text-gray-500 text-[9px]">Admin Ratio: 1 per 10 stations</p></div></div></div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10 relative"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+
+<div id="slide-05" class="slide-wrapper">
+  <div class="slide-label">SLIDE 05</div>
+  <div class="slide-container"><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Full Prize Pool Breakdown</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">LKR 2,000,000 TOTAL • PLACEMENT DISTRIBUTION • FINANCIAL ALLOCATION</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-accent font-bold text-lg">SLIDE 05</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden"><div class="col-span-8 flex flex-col gap-3"><div class="section-card flex-1"><div class="p-2 header-pc flex justify-between items-center border-b border-gray-700"><div class="flex items-center"><i class="fas fa-desktop text-accent mr-2 text-sm"></i><div><h3 class="text-sm font-bold text-white leading-none">Gaming Prize Pool</h3><p class="text-[9px] text-gray-400">All Titles Included</p></div></div><span class="total-badge text-accent">LKR 2,000,000</span></div><div class="p-4 flex-1 overflow-auto"><div class="grid grid-cols-2 gap-4"><div class="bg-slate-900 p-4 rounded border border-gray-700"><h4 class="text-white font-bold mb-2">Included Titles</h4><ul class="text-xs text-gray-400 space-y-1 list-disc pl-4"><li>Valorant</li><li>Dota 2</li><li>League of Legends</li><li>COD 4</li><li>PUBG Mobile</li><li>Free Fire</li><li>Mobile Legends</li><li>Clash Royale</li><li>FC 25</li><li>Tekken / SF / MK</li><li>Women's Categories</li></ul></div><div class="flex flex-col gap-4"><div class="bg-slate-900 p-4 rounded border border-gray-700 flex-1"><h4 class="text-white font-bold mb-2">Distribution Structure</h4><p class="text-sm text-gray-300">First 4 Places Awarded Prize Money across all major titles.</p></div><div class="p-3 bg-slate-800 border-l-4 border-green-500 rounded" style="border-left-color: #22c55e;"><div class="flex justify-between items-center mb-1"><div class="flex items-center"><i class="fas fa-users text-green-500 mr-2 text-sm"></i><h3 class="text-sm font-bold text-white">Best Clan Award</h3></div><span class="text-sm font-bold text-green-400">LKR 150,000</span></div><div class="flex justify-between text-[10px] text-gray-400 pt-2 border-t border-gray-700"><p class="text-xs text-gray-300 italic">Fixed Award - Not Divided</p></div></div></div></div></div></div></div><div class="col-span-4 flex flex-col gap-3"><div class="section-card flex-1"><div class="p-2 header-comic flex justify-between items-center border-b border-gray-700"><div class="flex items-center"><i class="fas fa-mask text-red-400 mr-2 text-sm"></i><div><h3 class="text-sm font-bold text-white leading-none">Comic-Con</h3><p class="text-[9px] text-gray-400">Cosplay &amp; Creative</p></div></div><span class="total-badge text-red-400">LKR 500,000</span></div><div class="p-2 flex-1 overflow-auto"><table class="w-full text-left border-collapse"><thead class="table-header"><tr><th class="py-1">Category</th><th class="py-1 text-right">Pool</th><th class="py-1 text-right text-gold">1st</th><th class="py-1 text-right text-gray-400">2nd</th><th class="py-1 text-right text-amber-700">3rd</th></tr></thead><tbody><tr class="table-row"><td class="py-2 font-bold text-white">Professional</td><td class="py-2 text-right">150K</td><td class="py-2 text-right rank-1">80K</td><td class="py-2 text-right rank-2">45K</td><td class="py-2 text-right rank-3">25K</td></tr><tr class="table-row"><td class="py-2 font-bold text-white">Amateur</td><td class="py-2 text-right">100K</td><td class="py-2 text-right rank-1">50K</td><td class="py-2 text-right rank-2">30K</td><td class="py-2 text-right rank-3">20K</td></tr><tr class="table-row"><td class="py-2 font-bold text-white">Group</td><td class="py-2 text-right">100K</td><td class="py-2 text-right rank-1">50K</td><td class="py-2 text-right rank-2">30K</td><td class="py-2 text-right rank-3">20K</td></tr><tr class="table-row"><td class="py-2 font-bold text-white">Kids</td><td class="py-2 text-right">50K</td><td class="py-2 text-right rank-1">25K</td><td class="py-2 text-right rank-2">15K</td><td class="py-2 text-right rank-3">10K</td></tr><tr class="table-row"><td class="py-2 font-bold text-white">Prop Making</td><td class="py-2 text-right">50K</td><td class="py-2 text-right rank-1">25K</td><td class="py-2 text-right rank-2">15K</td><td class="py-2 text-right rank-3">10K</td></tr><tr class="table-row"><td class="py-2 font-bold text-white">SFX Makeup</td><td class="py-2 text-right">50K</td><td class="py-2 text-right rank-1">25K</td><td class="py-2 text-right rank-2">15K</td><td class="py-2 text-right rank-3">10K</td></tr></tbody></table></div></div><div class="section-card h-[40%] p-3"><h3 class="text-xs font-bold text-white mb-2 uppercase border-b border-gray-700 pb-1">Allocation Summary</h3><div class="flex-1 relative"><canvas id="prizeChart"></canvas></div><div class="text-[9px] text-gray-500 text-center mt-2"><i class="fas fa-info-circle mr-1"></i>Prize money distributed via bank transfer (D+14)
+                    </div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div><script>
+        const ctx = document.getElementById('prizeChart').getContext('2d');
+        const prizeChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Gaming Pool', 'Comic-Con'],
+                datasets: [{
+                    data: [2000, 500],
+                    backgroundColor: [
+                        '#22d3ee', // Gaming - Cyan
+                        '#f87171'  // Comic - Red
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { size: 9 },
+                            boxWidth: 8
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    </script>
+</div>
+
+<div id="slide-06" class="slide-wrapper">
+  <div class="slide-label">SLIDE 06</div>
+  <div class="slide-container"><div class="comic-bg"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Comic-Con, Cosplay &amp; Creator Economy</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">COMPETITION OPS • ARTIST ALLEY • FAN ENGAGEMENT</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-emerald-400 font-bold text-lg">SLIDE 06</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden z-10"><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 accent-pink flex-1"><h3 class="text-sm font-bold text-white mb-3 flex items-center"><i class="fas fa-mask text-pink-500 mr-2"></i> Cosplay Competition
+                    </h3><div class="mb-4"><p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Categories</p><div class="flex flex-wrap gap-1"><span class="tag-pill tag-pro">Professional</span><span class="tag-pill tag-amateur">Amateur</span><span class="tag-pill tag-pro">Group</span><span class="tag-pill tag-amateur">Kids</span><span class="tag-pill tag-tech">Prop Making</span><span class="tag-pill tag-tech">SFX Makeup</span></div></div><div class="mb-4 bg-slate-800 rounded p-3 border border-gray-700"><p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Judging Criteria</p><div class="space-y-2"><div class="flex items-center text-xs"><span class="w-24 text-gray-300">Craftsmanship</span><div class="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden mx-2"><div class="h-full bg-pink-500 w-[30%]"></div></div><span class="text-white font-bold">30%</span></div><div class="flex items-center text-xs"><span class="w-24 text-gray-300">Accuracy</span><div class="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden mx-2"><div class="h-full bg-purple-500 w-[25%]"></div></div><span class="text-white font-bold">25%</span></div><div class="flex items-center text-xs"><span class="w-24 text-gray-300">Performance</span><div class="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden mx-2"><div class="h-full bg-blue-500 w-[25%]"></div></div><span class="text-white font-bold">25%</span></div><div class="flex items-center text-xs"><span class="w-24 text-gray-300">Presentation</span><div class="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden mx-2"><div class="h-full bg-yellow-500 w-[20%]"></div></div><span class="text-white font-bold">20%</span></div></div></div><div class="flex-1"><p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Execution Flow</p><div class="ml-2"><div class="timeline-step"><div class="timeline-dot"></div><p class="text-xs font-bold text-white">Online Registration &amp; Vetting</p><p class="text-[9px] text-gray-400">Portfolio check for Pro category (T-30 Days)</p></div><div class="timeline-step"><div class="timeline-dot"></div><p class="text-xs font-bold text-white">Green Room Pre-Judging</p><p class="text-[9px] text-gray-400">Close-up craftsmanship inspection (Event Day)</p></div><div class="timeline-step"><div class="timeline-dot"></div><p class="text-xs font-bold text-white">Stage Performance</p><p class="text-[9px] text-gray-400">2 min skits / 30 sec runway walks</p></div><div class="timeline-step"><div class="timeline-dot bg-green-500"></div><p class="text-xs font-bold text-white">Awards Ceremony</p><p class="text-[9px] text-gray-400">Main Stage Integration</p></div></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 accent-purple h-[60%]"><h3 class="text-sm font-bold text-white mb-3 flex items-center"><i class="fas fa-paint-brush text-purple-500 mr-2"></i> Artist Alley Operations
+                    </h3><div class="grid grid-cols-2 gap-2 mb-3"><div class="bg-slate-900 p-2 rounded border border-gray-700 text-center"><p class="text-2xl font-bold text-purple-400">50</p><p class="text-[9px] text-gray-400 uppercase">Booths</p></div><div class="bg-slate-900 p-2 rounded border border-gray-700 text-center"><p class="text-2xl font-bold text-white">3x3m</p><p class="text-[9px] text-gray-400 uppercase">Standard Size</p></div></div><table class="w-full text-left mb-3"><tbody class="text-[10px]"><tr class="border-b border-gray-700"><td class="py-2 text-gray-400"><i class="fas fa-check-circle text-green-500 mr-1"></i>Vetting</td><td class="py-2 text-white">Original IP &amp; Fan Art balance check</td></tr><tr class="border-b border-gray-700"><td class="py-2 text-gray-400"><i class="fas fa-wifi text-blue-500 mr-1"></i>Infra</td><td class="py-2 text-white">Dedicated Wi-Fi VLAN for POS terminals</td></tr><tr><td class="py-2 text-gray-400"><i class="fas fa-receipt text-yellow-500 mr-1"></i>Sales</td><td class="py-2 text-white">Digital receipts mandatory (Green initiative)</td></tr></tbody></table><div class="mt-auto bg-purple-900/20 p-2 rounded border border-purple-500/30"><p class="text-[10px] text-purple-300 font-bold mb-1">LIVE ART DEMOS - SCHEDULE</p><div class="flex justify-between text-[9px] text-gray-300"><span>12:00 Digital Painting</span><span>|</span><span>15:00 Prop Building</span><span>|</span><span>17:00 SFX Makeup</span></div></div></div><div class="section-card p-4 accent-yellow flex-1"><h3 class="text-sm font-bold text-white mb-2 flex items-center"><i class="fas fa-coins text-yellow-500 mr-2"></i> Creator Monetization
+                    </h3><ul class="space-y-2"><li class="flex items-start"><i class="fas fa-store text-gray-500 mt-1 mr-2 text-[10px]"></i><div><p class="text-xs font-bold text-white">Merch Commission System</p><p class="text-[10px] text-gray-400">Centralized printing station for on-demand poster prints.</p></div></li><li class="flex items-start"><i class="fas fa-handshake text-gray-500 mt-1 mr-2 text-[10px]"></i><div><p class="text-xs font-bold text-white">Meet &amp; Greet Zones</p><p class="text-[10px] text-gray-400">Paid signing sessions &amp; selfie slots (Ticket add-on).</p></div></li><li class="flex items-start"><i class="fas fa-tag text-gray-500 mt-1 mr-2 text-[10px]"></i><div><p class="text-xs font-bold text-white">Affiliate Codes</p><p class="text-[10px] text-gray-400">Sponsor Affiliate Codes</p></div></li><li class="flex items-start"><i class="fas fa-briefcase text-gray-500 mt-1 mr-2 text-[10px]"></i><div><p class="text-xs font-bold text-white">Partnerships</p><p class="text-[10px] text-gray-400">Brand Commission Partnerships & Sponsored Content Packages</p></div></li></ul></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 accent-blue"><h3 class="text-sm font-bold text-white mb-3 flex items-center"><i class="fas fa-users text-blue-500 mr-2"></i> Fan Interaction Zones
+                    </h3><div class="grid grid-cols-1 gap-2"><div class="bg-slate-900 p-2 rounded border border-gray-700 flex justify-between items-center"><div><p class="text-xs font-bold text-white">Photo Op Wall</p><p class="text-[10px] text-gray-400">Professional lighting setup + Green screen</p></div><i class="fas fa-camera text-blue-400 text-lg"></i></div><div class="bg-slate-900 p-2 rounded border border-gray-700 flex justify-between items-center"><div><p class="text-xs font-bold text-white">Signing Tables</p><p class="text-[10px] text-gray-400">Queue management system active</p></div><i class="fas fa-pen-nib text-blue-400 text-lg"></i></div><div class="bg-slate-900 p-2 rounded border border-gray-700 flex justify-between items-center"><div><p class="text-xs font-bold text-white">Community Lounge</p><p class="text-[10px] text-gray-400">Bean bags, charging docks, trading area</p></div><i class="fas fa-couch text-blue-400 text-lg"></i></div></div></div><div class="section-card flex-1 flex flex-col overflow-hidden"><div class="p-3 bg-slate-800 border-b border-gray-700"><h3 class="text-sm font-bold text-white"><i class="fas fa-sync-alt text-gray-400 mr-2"></i> Parallel Ops: Esports vs Comic-Con
+                        </h3></div><div class="flex-1 overflow-auto bg-slate-900 p-2"><div class="relative h-full"><div class="absolute left-[30%] top-0 bottom-0 w-px bg-gray-700 border-l border-dashed border-gray-600"></div><div class="flex mb-4 items-center"><div class="w-[30%] text-right pr-3"><p class="text-[10px] text-gray-400">10:00 - 12:00</p><p class="text-[10px] font-bold text-cyan-400">Esports Groups</p></div><div class="w-[70%] pl-3 relative"><div class="absolute left-[-4px] top-1.5 w-2 h-2 rounded-full bg-gray-500"></div><p class="text-[10px] font-bold text-pink-400">Cosplay Pre-Judging</p><p class="text-[9px] text-gray-500">Artist Alley Opening</p></div></div><div class="flex mb-4 items-center"><div class="w-[30%] text-right pr-3"><p class="text-[10px] text-gray-400">13:00 - 14:00</p><p class="text-[10px] font-bold text-cyan-400">Lunch Break</p></div><div class="w-[70%] pl-3 relative"><div class="absolute left-[-4px] top-1.5 w-2 h-2 rounded-full bg-gray-500"></div><p class="text-[10px] font-bold text-pink-400">Cosplay Runway (Sec Stage)</p><p class="text-[9px] text-gray-500">Fan Meet &amp; Greets</p></div></div><div class="flex mb-2 items-center"><div class="w-[30%] text-right pr-3"><p class="text-[10px] text-gray-400">16:00 - 18:00</p><p class="text-[10px] font-bold text-cyan-400">Esports Finals</p></div><div class="w-[70%] pl-3 relative"><div class="absolute left-[-4px] top-1.5 w-2 h-2 rounded-full bg-gray-500"></div><p class="text-[10px] font-bold text-pink-400">Cosplay Finals (Main Stage)</p><p class="text-[9px] text-gray-500">Intermission Show</p></div></div></div></div><div class="p-2 bg-slate-800 text-[9px] text-center text-gray-400 border-t border-gray-700">
+                        *Cross-promotion push notifications sent 15 mins prior to key segments
+                    </div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+
+<div id="slide-07" class="slide-wrapper">
+  <div class="slide-label">SLIDE 07</div>
+  <div class="slide-container"><div class="bg-pattern"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Staffing, Roles &amp; Activity Allocation</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">WORKFORCE (92 PAX) • ZONE MAPPING • SHIFT LOGISTICS</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-accent font-bold text-lg">SLIDE 07</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden z-10"><div class="col-span-3 flex flex-col gap-4"><div class="section-card p-4 border-l-4 border-blue-500"><div class="flex justify-between items-center mb-2"><h3 class="text-sm font-bold text-white">Total Workforce</h3><i class="fas fa-users text-blue-400"></i></div><div class="flex items-baseline"><p class="text-4xl font-bold text-white tracking-tight">92</p><p class="text-xs text-gray-400 ml-2">Active Personnel</p></div><div class="mt-2 text-[10px] text-gray-500"><p>*Excluding venue janitorial &amp; security</p></div></div><div class="section-card flex-1 p-0 overflow-hidden"><div class="p-3 bg-slate-800 border-b border-gray-700"><h3 class="text-xs font-bold text-white uppercase">Functional Deployment</h3></div><div class="overflow-auto p-2 space-y-2"><div class="bg-slate-900/50 p-2 rounded border border-gray-700"><div class="flex justify-between items-center mb-1"><span class="badge badge-ref"><i class="fas fa-gavel mr-1"></i>Game Ops</span><span class="text-xs font-bold text-white">30 Pax</span></div><ul class="text-[10px] text-gray-400 pl-1 space-y-0.5"><li class="flex justify-between"><span>PC Referees</span> <span class="text-gray-300">10</span></li><li class="flex justify-between"><span>Mobile Referees</span> <span class="text-gray-300">10</span></li><li class="flex justify-between"><span>Console Referees</span> <span class="text-gray-300">6</span></li><li class="flex justify-between"><span>Women's Officials</span> <span class="text-gray-300">4</span></li></ul></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700"><div class="flex justify-between items-center mb-1"><span class="badge badge-tech"><i class="fas fa-network-wired mr-1"></i>Tech &amp; Infra</span><span class="text-xs font-bold text-white">6 Pax</span></div><p class="text-[9px] text-gray-400">Network Engineers &amp; Electrical Safety</p></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700"><div class="flex justify-between items-center mb-1"><span class="badge badge-sec"><i class="fas fa-shield-alt mr-1"></i>Security</span><span class="text-xs font-bold text-white">15 Pax</span></div><p class="text-[9px] text-gray-400">Crowd control &amp; Asset protection</p></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700"><div class="flex justify-between items-center mb-1"><span class="badge badge-ops"><i class="fas fa-camera mr-1"></i>Media</span><span class="text-xs font-bold text-white">26 Pax</span></div><ul class="text-[10px] text-gray-400 pl-1 space-y-0.5"><li class="flex justify-between"><span>Broadcast/Prod</span> <span class="text-gray-300">10</span></li><li class="flex justify-between"><span>Casters/Hosts</span> <span class="text-gray-300">8</span></li><li class="flex justify-between"><span>Creative Team</span> <span class="text-gray-300">8</span></li></ul></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700"><div class="flex justify-between items-center mb-1"><span class="badge badge-lead"><i class="fas fa-clipboard-check mr-1"></i>Ops &amp; Lead</span><span class="text-xs font-bold text-white">28 Pax</span></div><ul class="text-[10px] text-gray-400 pl-1 space-y-0.5"><li class="flex justify-between"><span>Comic-Con Ops</span> <span class="text-gray-300">12</span></li><li class="flex justify-between"><span>Registration</span> <span class="text-gray-300">8</span></li><li class="flex justify-between"><span>Leadership</span> <span class="text-gray-300">8</span></li></ul></div></div></div></div><div class="col-span-6 flex flex-col"><div class="section-card h-full overflow-hidden"><div class="p-3 bg-slate-800 border-b border-gray-700 flex justify-between items-center"><h3 class="text-sm font-bold text-white flex items-center"><i class="fas fa-th text-accent mr-2"></i> Zone Allocation Matrix
+                        </h3><div class="flex gap-2 text-[9px]"><span class="flex items-center text-gray-400"><span class="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>Ref</span><span class="flex items-center text-gray-400"><span class="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>Tech</span><span class="flex items-center text-gray-400"><span class="w-2 h-2 rounded-full bg-red-500 mr-1"></span>Sec</span></div></div><div class="flex-1 overflow-auto"><table class="w-full text-left border-collapse"><thead class="table-header"><tr><th class="p-2 pl-3">Zone / Area</th><th class="p-2 text-center text-yellow-500">Refs/Ops</th><th class="p-2 text-center text-blue-400">Tech</th><th class="p-2 text-center text-red-400">Security</th><th class="p-2 text-center text-purple-400">Prod/Med</th><th class="p-2 text-center text-white">Lead</th></tr></thead><tbody class="text-gray-300"><tr class="table-row"><td class="p-2 pl-3 font-semibold text-white border-l-2 border-accent">Main Stage</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell cell-highlight">2</td><td class="p-2 matrix-cell">8</td><td class="p-2 matrix-cell">1</td></tr><tr class="table-row"><td class="p-2 pl-3 font-semibold text-white">Secondary Stage</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell">3</td><td class="p-2 matrix-cell">-</td></tr><tr class="table-row bg-slate-800/30"><td class="p-2 pl-3">PC Zone</td><td class="p-2 matrix-cell cell-highlight">6</td><td class="p-2 matrix-cell cell-highlight">3</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell">1</td></tr><tr class="table-row bg-slate-800/30"><td class="p-2 pl-3">Mobile Zone</td><td class="p-2 matrix-cell cell-highlight">6</td><td class="p-2 matrix-cell cell-highlight">2</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell">1</td></tr><tr class="table-row bg-slate-800/30"><td class="p-2 pl-3">Console Zone</td><td class="p-2 matrix-cell">4</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell">-</td><td class="p-2 matrix-cell">-</td></tr><tr class="table-row"><td class="p-2 pl-3 font-semibold text-white border-l-2 border-pink-500">Comic-Con Zone</td><td class="p-2 matrix-cell">12</td><td class="p-2 matrix-cell">-</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">1</td></tr><tr class="table-row"><td class="p-2 pl-3">Entry / Accred</td><td class="p-2 matrix-cell">8</td><td class="p-2 matrix-cell">1</td><td class="p-2 matrix-cell cell-highlight">3</td><td class="p-2 matrix-cell">-</td><td class="p-2 matrix-cell">1</td></tr><tr class="table-row"><td class="p-2 pl-3">F&amp;B / Common</td><td class="p-2 matrix-cell">-</td><td class="p-2 matrix-cell">-</td><td class="p-2 matrix-cell">2</td><td class="p-2 matrix-cell">-</td><td class="p-2 matrix-cell">-</td></tr></tbody></table></div><div class="p-2 bg-slate-900 border-t border-gray-700 text-[9px] text-gray-500 text-center">
+                        *Floating Staff: 8 Leadership personnel roaming all zones
+                    </div></div></div><div class="col-span-3 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-xs font-bold text-white uppercase mb-3 border-b border-gray-700 pb-2">Shift Rotation</h3><div class="space-y-1"><div class="shift-block"><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-white">Morning Shift (A)</p><span class="text-[9px] bg-slate-800 px-1 rounded text-gray-300">08:00 - 16:00</span></div><p class="text-[9px] text-gray-400">Setup, Qualifiers, Entry Peak</p></div><div class="shift-block" style="border-left-color: #a78bfa;"><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-white">Overlap Buffer</p><span class="text-[9px] bg-slate-800 px-1 rounded text-gray-300">14:00 - 16:00</span></div><p class="text-[9px] text-gray-400">Handover, Peak Load Support</p></div><div class="shift-block" style="border-left-color: #f472b6;"><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-white">Evening Shift (B)</p><span class="text-[9px] bg-slate-800 px-1 rounded text-gray-300">14:00 - 22:00</span></div><p class="text-[9px] text-gray-400">Finals, Awards, Load-out Prep</p></div></div></div><div class="section-card p-4 flex-1"><h3 class="text-xs font-bold text-white uppercase mb-3 border-b border-gray-700 pb-2">Command Protocols</h3><div class="mb-3"><p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Briefing Schedule</p><div class="grid grid-cols-2 gap-2"><div class="bg-slate-900 p-1.5 rounded text-center border border-gray-700"><p class="text-accent font-bold text-xs">07:30</p><p class="text-[9px] text-gray-500">All Hands</p></div><div class="bg-slate-900 p-1.5 rounded text-center border border-gray-700"><p class="text-pink-400 font-bold text-xs">13:30</p><p class="text-[9px] text-gray-500">Shift Lead</p></div></div></div><div><p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Escalation Chain</p><ul class="text-[10px] space-y-2"><li class="flex items-center"><span class="w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center text-[8px] mr-2 border border-gray-600">1</span><p class="text-gray-300">Zone Marshal</p></li><li class="flex items-center"><span class="w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center text-[8px] mr-2 border border-gray-600">2</span><p class="text-gray-300">Functional Lead (Tech/Sec)</p></li><li class="flex items-center"><span class="w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center text-[8px] mr-2 border border-red-500 text-red-400">3</span><p class="text-white font-bold">Event Director / Ops Mgr</p></li></ul></div></div><div class="section-card p-2 bg-red-900/20 border-red-900/50"><div class="flex items-center justify-between"><span class="text-[10px] font-bold text-red-300"><i class="fas fa-ambulance mr-1"></i>Medical Team</span><span class="text-[10px] text-white">4 Paramedics (Roaming)</span></div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+
+<div id="slide-08" class="slide-wrapper">
+  <div class="slide-label">SLIDE 08</div>
+  <div class="slide-container"><div class="tech-bg"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Logistics &amp; Technical Execution</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">HARDWARE SPECS • NETWORK ARCHITECTURE • INFRASTRUCTURE REDUNDANCY</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-cyan-400 font-bold text-lg">SLIDE 08</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden z-10"><div class="col-span-4 section-card header-accent p-3"><div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2"><h3 class="text-sm font-bold text-white"><i class="fas fa-microchip text-cyan-400 mr-2"></i>Gaming Hardware</h3><span class="text-[10px] text-gray-500 mono">INV-QTY: 390+ UNITS</span></div><div class="space-y-3 flex-1"><div class="bg-slate-900/50 p-2 rounded border border-gray-700/50"><div class="flex justify-between mb-1"><span class="text-xs font-bold text-white">PC Tournament Rigs</span><span class="spec-badge badge-cyan">50+ UNITS</span></div><ul class="text-[10px] text-gray-400 space-y-1 mono pl-1"><li><i class="fas fa-check text-cyan-500/70 mr-1"></i>GPU: Varies by Title</li><li><i class="fas fa-check text-cyan-500/70 mr-1"></i>RAM: 16GB</li><li><i class="fas fa-check text-cyan-500/70 mr-1"></i>Display: 120Hz+ IPS Panels</li></ul></div><div class="grid grid-cols-2 gap-2"><div class="bg-slate-900/50 p-2 rounded border border-gray-700/50"><p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Console Zone</p><div class="flex flex-col gap-1"><div class="flex justify-between items-center text-[10px] text-gray-300"><span>PS5</span> <span class="text-white font-bold">10x</span></div><div class="flex justify-between items-center text-[10px] text-gray-300"><span>Monitors</span> <span class="text-white font-bold">10x</span></div></div></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700/50"><p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Mobile Zone</p><div class="text-[10px] text-gray-300 leading-tight"><p class="mb-1"><span class="text-white font-bold">200x</span> Charging Stns</p><p><span class="text-white font-bold">No Backup Devices</span></p><p class="text-[9px] text-gray-500 mt-1">Players Bring Own Device + Cooling</p></div></div></div></div></div><div class="col-span-4 section-card header-net p-3"><div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2"><h3 class="text-sm font-bold text-white"><i class="fas fa-network-wired text-green-400 mr-2"></i>Network Architecture</h3><div class="flex items-center text-[10px] text-green-400"><span class="status-light status-ok"></span> NOC LIVE
+                    </div></div><div class="flex-1 flex flex-col justify-between"><div class="space-y-2 mb-3"><div class="flex items-center bg-slate-800 p-2 rounded border border-green-900/30"><div class="w-8 text-center text-green-500"><i class="fas fa-bolt"></i></div><div class="flex-1"><p class="text-[10px] text-gray-400 uppercase">Primary Link</p><p class="text-sm font-bold text-white">1 Gbps Dedicated Fiber</p></div></div><div class="flex items-center bg-slate-800 p-2 rounded border border-yellow-900/30"><div class="w-8 text-center text-yellow-500"><i class="fas fa-shield-alt"></i></div><div class="flex-1"><p class="text-[10px] text-gray-400 uppercase">Redundant Backup</p><p class="text-xs font-bold text-gray-200">500 Mbps Secondary + 4G/5G Failover</p></div></div></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700/50"><p class="text-[10px] text-gray-500 uppercase font-bold mb-2">VLAN Segmentation</p><div class="grid grid-cols-3 gap-1 text-center"><div class="bg-slate-800 p-1 rounded border border-gray-700"><p class="text-[9px] text-cyan-400 font-bold">VLAN 10</p><p class="text-[8px] text-gray-400">Tournament</p></div><div class="bg-slate-800 p-1 rounded border border-gray-700"><p class="text-[9px] text-purple-400 font-bold">VLAN 20</p><p class="text-[8px] text-gray-400">Production</p></div><div class="bg-slate-800 p-1 rounded border border-gray-700"><p class="text-[9px] text-gray-400 font-bold">VLAN 30</p><p class="text-[8px] text-gray-500">Public Wi-Fi</p></div></div></div></div></div><div class="col-span-4 section-card header-power p-3"><div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2"><h3 class="text-sm font-bold text-white"><i class="fas fa-plug text-yellow-400 mr-2"></i>Power Distribution</h3><span class="text-[10px] text-yellow-500 font-bold">TOTAL LOAD: 250kW</span></div><div class="flex-1"><div class="flex items-center justify-between mb-4 px-2"><div class="text-center"><div class="w-12 h-12 rounded-full border-4 border-yellow-500 flex items-center justify-center mb-1"><i class="fas fa-building text-yellow-500"></i></div><p class="text-[10px] text-gray-400">MAINS</p><p class="text-xs font-bold text-white">200kW</p></div><div class="h-0.5 flex-1 bg-gray-700 mx-2 relative"><div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-800 px-1 text-[9px] text-gray-500">AUTO-SWITCH &lt;5s</div></div><div class="text-center"><div class="w-12 h-12 rounded-full border-4 border-red-500 flex items-center justify-center mb-1"><i class="fas fa-charging-station text-red-500"></i></div><p class="text-[10px] text-gray-400">GENSET</p><p class="text-xs font-bold text-white">150kVA</p></div></div><table class="w-full text-[10px] text-left"><tr class="border-b border-gray-700/50"><td class="py-1 text-gray-400">Circuits</td><td class="py-1 text-right text-white mono">40+ Separate Lines</td></tr><tr class="border-b border-gray-700/50"><td class="py-1 text-gray-400">Protection</td><td class="py-1 text-right text-white">Industrial Surge Protection</td></tr><tr><td class="py-1 text-gray-400">Critical UPS</td><td class="py-1 text-right text-yellow-400 font-bold">Stages, NOC, TO Desks</td></tr></table></div></div><div class="col-span-6 section-card header-stage p-3"><div class="flex justify-between items-center mb-2"><h3 class="text-sm font-bold text-white"><i class="fas fa-video text-purple-400 mr-2"></i>Stage &amp; Broadcast Production</h3></div><div class="grid grid-cols-2 gap-3 mb-2 h-full"><div class="bg-slate-900/50 p-3 rounded border border-purple-500/30 relative overflow-hidden"><div class="absolute top-0 right-0 bg-purple-500/20 px-2 py-0.5 text-[8px] text-purple-300 font-bold rounded-bl">MAIN STAGE</div><div class="space-y-2 mt-1"><div class="flex items-center text-[10px]"><i class="fas fa-tv w-5 text-purple-400"></i><span class="text-gray-300">40ft LED Wall + 120K Lumens</span></div><div class="flex items-center text-[10px]"><i class="fas fa-volume-up w-5 text-purple-400"></i><span class="text-gray-300">32-Channel Line Array Audio</span></div><div class="flex items-center text-[10px]"><i class="fas fa-lightbulb w-5 text-purple-400"></i><span class="text-gray-300">100+ Intelligent Fixtures</span></div></div></div><div class="space-y-2"><div class="bg-slate-900/50 p-2 rounded border border-gray-700/50"><p class="text-[9px] text-gray-400 font-bold mb-1">SECONDARY STAGE</p><p class="text-[10px] text-white">20ft LED • 60K Lumens • 16-ch Audio</p></div><div class="bg-slate-900/50 p-2 rounded border border-gray-700/50"><p class="text-[9px] text-gray-400 font-bold mb-1">BROADCAST</p><p class="text-[10px] text-white">10-Camera Setup • Instant Replay • RTMP</p></div></div></div></div><div class="col-span-6 section-card p-3 border-l-4 border-gray-500"><div class="flex justify-between items-center mb-2"><h3 class="text-sm font-bold text-white"><i class="fas fa-clock text-gray-400 mr-2"></i>Load-in / Load-out Timeline</h3><div class="flex gap-2"><span class="spec-badge badge-green"><i class="fas fa-lock mr-1"></i>SECURE STORAGE 24/7</span></div></div><div class="relative mt-8 px-4"><div class="timeline-track"></div><div class="absolute left-[10%] top-0 transform -translate-x-1/2 w-full"><div class="timeline-point active" style="left: 0;"></div><div class="timeline-label text-left" style="left: 0; transform: translateX(-15%);"><p class="text-xs font-bold text-cyan-400">D-3</p><p class="text-[9px] text-gray-400">Venue Access<br/>Infra Setup</p></div></div><div class="absolute left-[35%] top-0 transform -translate-x-1/2 w-full"><div class="timeline-point" style="left: 0;"></div><div class="timeline-label" style="left: 0; transform: translateX(-50%);"><p class="text-xs font-bold text-white">D-2</p><p class="text-[9px] text-gray-400">Hardware Install<br/>Network Config</p></div></div><div class="absolute left-[60%] top-0 transform -translate-x-1/2 w-full"><div class="timeline-point" style="left: 0;"></div><div class="timeline-label" style="left: 0; transform: translateX(-50%);"><p class="text-xs font-bold text-white">D-1</p><p class="text-[9px] text-gray-400">Testing &amp; Rehearsal<br/>Security Brief</p></div></div><div class="absolute left-[85%] top-0 transform -translate-x-1/2 w-full"><div class="timeline-point bg-green-500 border-green-300" style="left: 0;"></div><div class="timeline-label text-right" style="left: 0; transform: translateX(-50%);"><p class="text-xs font-bold text-green-400">EVENT DAY</p><p class="text-[9px] text-gray-400">Live Ops</p></div></div></div><div class="mt-auto pt-3 border-t border-gray-700/50 flex justify-between items-center text-[9px]"><div class="flex items-center text-gray-400"><i class="fas fa-shield-alt mr-1"></i> Data Encryption: All player data &amp; scores encrypted
+                     </div><div class="flex items-center text-gray-400"><i class="fas fa-user-lock mr-1"></i> Anti-Cheat: Hardware &amp; Software integrity checks
+                     </div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+
+<div id="slide-09" class="slide-wrapper">
+  <div class="slide-label">SLIDE 09</div>
+  <div class="slide-container"><div class="bg-network"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Marketing, PR &amp; Media Execution</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">PHASED CAMPAIGN • PAID MEDIA (LKR 1.2M) • CONTENT STRATEGY</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-orange-400 font-bold text-lg">SLIDE 09</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden z-10"><div class="col-span-4 flex flex-col h-full"><div class="section-card flex-1 p-4"><h3 class="text-sm font-bold text-white mb-4 flex items-center border-b border-gray-700 pb-2"><i class="fas fa-history text-orange-400 mr-2"></i> Campaign Timeline
+            </h3><div class="flex-1 overflow-y-auto pr-2"><div class="timeline-step"><div class="timeline-dot border-cyan-500 text-cyan-500"><i class="fas fa-rocket"></i></div><div class="mb-1"><span class="text-[10px] font-bold text-cyan-400 bg-cyan-900/20 px-1.5 py-0.5 rounded">PHASE 1: PRE-EVENT (T-60)</span></div><div class="bg-slate-800/50 p-2 rounded border border-gray-700"><p class="text-[10px] text-white font-bold mb-1">Launch &amp; Tease</p><ul class="text-[9px] text-gray-400 list-disc pl-3 space-y-0.5"><li>Site Launch + Socials Reset</li><li>Influencer Seeding (20+ Ambassadors)</li><li>Teaser Countdowns &amp; Key Visual Reveal</li><li><span class="text-cyan-400">Early Bird Tickets Live</span></li></ul></div></div><div class="timeline-step"><div class="timeline-dot border-yellow-500 text-yellow-500"><i class="fas fa-user-plus"></i></div><div class="mb-1"><span class="text-[10px] font-bold text-yellow-400 bg-yellow-900/20 px-1.5 py-0.5 rounded">PHASE 2: REGISTRATION (T-45)</span></div><div class="bg-slate-800/50 p-2 rounded border border-gray-700"><p class="text-[10px] text-white font-bold mb-1">Acquisition Push</p><ul class="text-[9px] text-gray-400 list-disc pl-3 space-y-0.5"><li>Tournament Reg Opening (All Titles)</li><li>Daily "Game Spotlight" Content</li><li>Paid Ads Scale-up (Meta/TikTok/YT)</li><li>Direct Comms: Discord/WhatsApp/Email</li></ul></div></div><div class="timeline-step"><div class="timeline-dot border-pink-500 text-pink-500"><i class="fas fa-broadcast-tower"></i></div><div class="mb-1"><span class="text-[10px] font-bold text-pink-400 bg-pink-900/20 px-1.5 py-0.5 rounded">PHASE 3: EVENT-TIME</span></div><div class="bg-slate-800/50 p-2 rounded border border-gray-700"><p class="text-[10px] text-white font-bold mb-1">Live Amplification</p><ul class="text-[9px] text-gray-400 list-disc pl-3 space-y-0.5"><li>Real-time Match Highlights</li><li>Live Polls, Giveaways &amp; AR Filters</li><li>Influencer Takeovers</li><li><span class="text-pink-400">Livestream (YT/FB/Twitch)</span></li></ul></div></div><div class="timeline-step"><div class="timeline-dot border-green-500 text-green-500"><i class="fas fa-flag-checkered"></i></div><div class="mb-1"><span class="text-[10px] font-bold text-green-400 bg-green-900/20 px-1.5 py-0.5 rounded">PHASE 4: POST-EVENT (T+7)</span></div><div class="bg-slate-800/50 p-2 rounded border border-gray-700"><p class="text-[10px] text-white font-bold mb-1">Legacy &amp; Retention</p><ul class="text-[9px] text-gray-400 list-disc pl-3 space-y-0.5"><li>Official Aftermovie &amp; Recap</li><li>Winner Interviews</li><li>Sponsor ROI Reports</li><li>Community Feedback Surveys</li></ul></div></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-sm font-bold text-white mb-3 flex items-center justify-between"><span><i class="fas fa-coins text-yellow-400 mr-2"></i>Paid Media Allocation</span><span class="text-[10px] bg-yellow-900/30 text-yellow-400 px-2 py-0.5 rounded border border-yellow-600/30">LKR 1,200,000</span></h3><div class="relative h-32 w-full flex items-center justify-center mb-2"><canvas id="budgetChart"></canvas></div><div class="space-y-2"><div class="channel-row"><div class="social-icon meta"><i class="fab fa-facebook"></i></div><div class="flex-1"><p class="text-white font-bold">Meta (FB + IG)</p><p class="text-[9px] text-gray-500">Retargeting &amp; Event Pages</p></div><span class="budget-pill">LKR 500K</span></div><div class="channel-row"><div class="social-icon youtube"><i class="fab fa-youtube"></i></div><div class="flex-1"><p class="text-white font-bold">YouTube Ads</p><p class="text-[9px] text-gray-500">Pre-roll Trailers (Gaming Channels)</p></div><span class="budget-pill">LKR 400K</span></div><div class="channel-row"><div class="social-icon tiktok"><i class="fab fa-tiktok"></i></div><div class="flex-1"><p class="text-white font-bold">TikTok Ads</p><p class="text-[9px] text-gray-500">Challenge Hashtags &amp; Feed Ads</p></div><span class="budget-pill">LKR 300K</span></div></div></div><div class="section-card flex-1 p-4"><h3 class="text-sm font-bold text-white mb-3 flex items-center"><i class="fas fa-paper-plane text-blue-400 mr-2"></i> Community &amp; Direct
+            </h3><div class="grid grid-cols-2 gap-2 h-full"><div class="metric-box flex flex-col justify-center"><i class="fab fa-discord text-2xl discord mb-1"></i><p class="text-lg font-bold text-white">10K+</p><p class="text-[9px] text-gray-400 uppercase">Server Members</p></div><div class="metric-box flex flex-col justify-center"><i class="fab fa-whatsapp text-2xl whatsapp mb-1"></i><p class="text-lg font-bold text-white">50+</p><p class="text-[9px] text-gray-400 uppercase">Clan Leader Groups</p></div><div class="metric-box flex flex-col justify-center"><i class="fas fa-envelope text-2xl text-gray-400 mb-1"></i><p class="text-lg font-bold text-white">25K</p><p class="text-[9px] text-gray-400 uppercase">Email Database</p></div><div class="metric-box flex flex-col justify-center"><i class="fas fa-users text-2xl text-orange-400 mb-1"></i><p class="text-lg font-bold text-white">20+</p><p class="text-[9px] text-gray-400 uppercase">Influencers</p></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4"><h3 class="text-sm font-bold text-white mb-3 flex items-center"><i class="fas fa-newspaper text-gray-300 mr-2"></i> PR &amp; Media Partnerships
+            </h3><div class="space-y-3"><div class="bg-slate-900/80 p-2 rounded border-l-2 border-red-500"><p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Broadcast Partners</p><div class="flex flex-wrap gap-1"><span class="text-[9px] bg-slate-800 px-2 py-0.5 rounded text-white border border-gray-600">Yes FM</span></div></div><div class="bg-slate-900/80 p-2 rounded border-l-2 border-blue-500"><p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Digital &amp; Print</p><div class="flex flex-wrap gap-1"><span class="text-[9px] bg-slate-800 px-2 py-0.5 rounded text-white border border-gray-600">Daily Mirror</span><span class="text-[9px] bg-slate-800 px-2 py-0.5 rounded text-white border border-gray-600">Tech Blocks</span><span class="text-[9px] bg-slate-800 px-2 py-0.5 rounded text-white border border-gray-600">Other Partners (TBC)</span></div></div><div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-2 bg-slate-800 rounded"><p class="text-[10px] text-gray-400">Press Conf</p><p class="text-xs font-bold text-white">T-30 Days</p></div><div class="text-center p-2 bg-slate-800 rounded"><p class="text-[10px] text-gray-400">Media Day</p><p class="text-xs font-bold text-white">T-1 Day</p></div></div></div></div><div class="section-card flex-1 p-4"><h3 class="text-sm font-bold text-white mb-3 flex items-center border-b border-gray-700 pb-2"><i class="fas fa-photo-video text-purple-400 mr-2"></i> Content Deliverables
+            </h3><table class="w-full text-left"><tbody><tr class="border-b border-gray-700/50"><td class="py-2 text-[10px] text-gray-400">Pre-Event Hype</td><td class="py-2 text-[10px] text-white font-bold text-right">100+ Assets</td></tr><tr class="border-b border-gray-700/50"><td class="py-2 text-[10px] text-gray-400">Live Broadcast</td><td class="py-2 text-[10px] text-white font-bold text-right">8 Hours / Day</td></tr><tr class="border-b border-gray-700/50"><td class="py-2 text-[10px] text-gray-400">Stream Reach</td><td class="py-2 text-[10px] text-pink-400 font-bold text-right">100K+ Viewers</td></tr><tr class="border-b border-gray-700/50"><td class="py-2 text-[10px] text-gray-400">Event Photos</td><td class="py-2 text-[10px] text-white font-bold text-right">500+ HD Images</td></tr><tr><td class="py-2 text-[10px] text-gray-400">Recap Videos</td><td class="py-2 text-[10px] text-white font-bold text-right">50+ Clips</td></tr></tbody></table><div class="mt-auto bg-purple-900/20 p-2 rounded border border-purple-500/30 text-center"><p class="text-[9px] text-purple-200"><i class="fas fa-camera mr-1"></i> Dedicated 8-Person Media Team
+                </p></div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div><script>
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        const budgetChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Meta Ads', 'YouTube Ads', 'TikTok Ads'],
+                datasets: [{
+                    data: [500, 400, 300],
+                    backgroundColor: [
+                        '#1877f2', // Meta Blue
+                        '#ff0000', // YouTube Red
+                        '#ff0050'  // TikTok Pink
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { size: 9 },
+                            boxWidth: 8,
+                            padding: 10
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
+</div>
+
+<div id="slide-10" class="slide-wrapper">
+  <div class="slide-label">SLIDE 10</div>
+  <div class="slide-container"><div class="bg-geo"></div><header class="flex justify-between items-end border-b border-gray-700 pb-3 mb-4 z-10"><div><h1 class="text-4xl font-bold tracking-wide text-white mb-1">Partners, Risk &amp; Post-Event Delivery</h1><p class="text-gray-400 text-sm font-semibold tracking-wider">ECOSYSTEM STRUCTURE • CONTINGENCY PROTOCOLS • CLOSURE TIMELINE</p></div><div class="text-right"><div class="text-xs text-gray-500 font-mono">DOC ID: SLGE-OPS-26-V1</div><div class="text-emerald-400 font-bold text-lg">SLIDE 10</div></div></header><div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden z-10"><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 h-full"><h3 class="text-sm font-bold text-white mb-4 flex items-center border-b border-gray-700 pb-2"><i class="fas fa-handshake text-yellow-500 mr-2"></i> Partnership Ecosystem
+                </h3><div class="partner-tier tier-title"><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-yellow-400 uppercase">Title Sponsor</p><span class="text-[9px] font-bold bg-yellow-900/40 text-yellow-200 px-1 rounded">LKR 10M+</span></div><p class="text-[10px] text-gray-300">Primary branding rights, Main Stage naming, Top-tier visibility.</p></div><div class="partner-tier tier-strategic"><p class="text-xs font-bold text-blue-400 uppercase mb-2">Co-Hosts</p><div class="space-y-2"><div class="bg-slate-800 p-2 rounded border border-blue-900/30"><p class="text-[10px] text-white font-bold"><i class="fas fa-handshake text-blue-500 mr-1"></i>iPlay.lk &amp; Yes 101</p></div></div></div><div class="partner-tier tier-strategic"><p class="text-xs font-bold text-blue-400 uppercase mb-2">Operational Partners</p><div class="space-y-2"><div class="bg-slate-800 p-2 rounded border border-blue-900/30"><p class="text-[10px] text-white font-bold"><i class="fas fa-calendar-check text-blue-500 mr-1"></i>Forge Lanka Events</p><p class="text-[9px] text-gray-400">Production &amp; Activation Partner</p></div><div class="bg-slate-800 p-2 rounded border border-blue-900/30"><p class="text-[10px] text-white font-bold"><i class="fas fa-video text-blue-500 mr-1"></i>ideaGrove Private Limited</p><p class="text-[9px] text-gray-400">Stage &amp; Decorations Partner</p></div></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 h-full border-t-4 border-t-red-500"><h3 class="text-sm font-bold text-white mb-4 flex items-center justify-between border-b border-gray-700 pb-2"><span><i class="fas fa-shield-alt text-red-500 mr-2"></i>Risk Mitigation Matrix</span><span class="text-[9px] text-red-400 bg-red-900/20 px-2 py-0.5 rounded">HIGH PRIORITY</span></h3><div class="flex-1 overflow-auto"><div class="risk-row"><div class="flex items-start mb-1"><div class="risk-icon"><i class="fas fa-building text-red-400"></i></div><div><p class="text-[10px] font-bold text-white">Venue Failure (BMICH)</p><p class="text-[9px] text-gray-400">Force Majeure / Structural</p></div></div><div class="ml-6 bg-slate-800 p-2 rounded border border-gray-600"><p class="text-[9px] text-gray-300"><span class="text-red-400 font-bold">MITIGATION:</span> Contractual Force Majeure clauses.</p><p class="text-[9px] text-gray-300 mt-1"><span class="text-green-400 font-bold">BACKUP:</span> Activate SL ECC or another suitable venue.</p></div></div><div class="risk-row"><div class="flex items-start mb-1"><div class="risk-icon"><i class="fas fa-bolt text-yellow-400"></i></div><div><p class="text-[10px] font-bold text-white">Power &amp; Internet Outage</p><p class="text-[9px] text-gray-400">Critical Infra Failure</p></div></div><div class="ml-6 bg-slate-800 p-2 rounded border border-gray-600"><p class="text-[9px] text-gray-300"><span class="text-green-400 font-bold">POWER:</span> 150kVA Generator (ATS &lt; 5s) + UPS.</p><p class="text-[9px] text-gray-300 mt-1"><span class="text-green-400 font-bold">NET:</span> Dual-ISP Fiber + 5G Failover.</p></div></div><div class="risk-row"><div class="flex items-start mb-1"><div class="risk-icon"><i class="fas fa-users text-orange-400"></i></div><div><p class="text-[10px] font-bold text-white">Crowd Overflow</p><p class="text-[9px] text-gray-400">&gt;20,000 Footfall</p></div></div><div class="ml-6 bg-slate-800 p-2 rounded border border-gray-600"><p class="text-[9px] text-gray-300"><span class="text-green-400 font-bold">ACTION:</span> Phased entry system. Dynamic queue management. Outdoor hybrid activation.</p></div></div><div class="risk-row"><div class="flex items-start mb-1"><div class="risk-icon"><i class="fas fa-microchip text-blue-400"></i></div><div><p class="text-[10px] font-bold text-white">Tech &amp; Talent Failure</p><p class="text-[9px] text-gray-400">No-shows / Hardware breakdown</p></div></div><div class="ml-6 bg-slate-800 p-2 rounded border border-gray-600"><p class="text-[9px] text-gray-300">20% Spare Hardware onsite. Backup Caster roster. Cross-trained referees.</p></div></div></div></div></div><div class="col-span-4 flex flex-col gap-4"><div class="section-card p-4 h-full border-t-4 border-t-green-500"><h3 class="text-sm font-bold text-white mb-4 flex items-center border-b border-gray-700 pb-2"><i class="fas fa-check-circle text-green-500 mr-2"></i> Post-Event Deliverables
+                </h3><div class="flex-1 pl-2"><div class="pe-step"><div class="pe-dot"></div><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-white">Sponsor Reports</p><span class="badge badge-green">Within 14 Days</span></div><ul class="text-[10px] text-gray-400 list-disc pl-3"><li>Footfall &amp; Demographic Breakdown</li><li>Brand Visibility Metrics (Impressions)</li><li>Activation Engagement Data</li><li><span class="text-green-400">ROI Calculation</span></li></ul></div><div class="pe-step"><div class="pe-dot bg-green-500 border-green-700"></div><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-white">Analytics &amp; Insights</p><span class="badge badge-blue">Within 21 Days</span></div><ul class="text-[10px] text-gray-400 list-disc pl-3"><li>Tournament Stats (Matches, Viewership)</li><li>Audience Dwell Time &amp; Heatmaps</li><li>Technical Performance / Uptime Log</li><li>Attendee Survey Results</li></ul></div><div class="pe-step"><div class="pe-dot border-blue-500"></div><div class="flex justify-between items-center mb-1"><p class="text-xs font-bold text-white">Media Coverage</p><span class="badge badge-blue">Within 30 Days</span></div><ul class="text-[10px] text-gray-400 list-disc pl-3"><li>Press Clippings &amp; Broadcast Summary</li><li>Online Sentiment Tracking</li><li>Advertising Value Equivalent (AVE)</li><li>Influencer Content Performance</li></ul></div></div><div class="mt-auto bg-slate-800 p-3 rounded border border-gray-600"><p class="text-[10px] font-bold text-white uppercase mb-2"><i class="fas fa-folder-open text-yellow-400 mr-2"></i>Asset Handover</p><div class="grid grid-cols-2 gap-2 text-[9px] text-gray-300"><div class="flex items-center"><i class="fas fa-camera text-gray-500 w-4"></i> 500+ HD Photos</div><div class="flex items-center"><i class="fas fa-video text-gray-500 w-4"></i> 50+ Recap Videos</div><div class="flex items-center"><i class="fas fa-film text-gray-500 w-4"></i> Full Broadcasts</div><div class="flex items-center"><i class="fas fa-file-alt text-gray-500 w-4"></i> Financial Summary</div></div></div></div></div></div><footer class="mt-4 border-t border-gray-700 pt-2 flex justify-between items-center text-[10px] text-gray-500 z-10"><p>CONFIDENTIAL - INTERNAL OPERATIONAL USE ONLY</p><p>Sri Lanka Gaming Expo 2026</p></footer></div>
+</div>
+  </div>
+
+  <script>
+    /* === SLIDE 2 SCRIPT === */
+(function() {
+
+    // Chart.js Configuration
+    const ctx = document.getElementById('demographicsChart').getContext('2d');
+    const demographicsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['18-24 Yrs', '25-34 Yrs', 'Under 18', '35+ Yrs'],
+            datasets: [{
+                data: [45, 30, 15, 10],
+                backgroundColor: [
+                    '#22d3ee', // Cyan
+                    '#a78bfa', // Purple
+                    '#f472b6', // Pink
+                    '#94a3b8'  // Slate
+                ],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#cbd5e1',
+                        font: {
+                            family: 'Inter',
+                            size: 10
+                        },
+                        boxWidth: 10
+                    }
+                }
+            },
+            cutout: '65%'
+        }
+    });
+})();
+
+/* === SLIDE 5 SCRIPT === */
+(function() {
+
+        const ctx = document.getElementById('prizeChart').getContext('2d');
+        const prizeChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Gaming Pool', 'Comic-Con'],
+                datasets: [{
+                    data: [2000, 500],
+                    backgroundColor: [
+                        '#22d3ee', // Gaming - Cyan
+                        '#f87171'  // Comic - Red
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { size: 9 },
+                            boxWidth: 8
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    
+})();
+
+/* === SLIDE 9 SCRIPT === */
+(function() {
+
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        const budgetChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Meta Ads', 'YouTube Ads', 'TikTok Ads'],
+                datasets: [{
+                    data: [500, 400, 300],
+                    backgroundColor: [
+                        '#1877f2', // Meta Blue
+                        '#ff0000', // YouTube Red
+                        '#ff0050'  // TikTok Pink
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { size: 9 },
+                            boxWidth: 8,
+                            padding: 10
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    
+})();
+  </script>
+
+</body>
+</html>
